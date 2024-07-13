@@ -1,0 +1,28 @@
+resourceMetrics:
+  - schemaUrl: https://test-res-schema.com/schema
+    resource:
+      attributes:
+        - key: service.name
+          value:
+            stringValue: myService
+    scopeMetrics:
+      - schemaUrl: https://test-scope-schema.com/schema
+        scope:
+          name: MyTestInstrument
+          version: "1.2.3"
+          attributes:
+            - key: foo
+              value:
+                stringValue: bar
+        metrics:
+          - name: delta.monotonic.sum
+            sum:
+              aggregationTemporality: 1
+              isMonotonic: true
+              dataPoints:
+                - timeUnixNano: 50
+                  asDouble: 333
+                  attributes:
+                    - key: aaa
+                      value:
+                        stringValue: bbb
