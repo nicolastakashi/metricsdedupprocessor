@@ -108,5 +108,4 @@ func (p *Processor) getInUseReplica(replica pcommon.Value, now time.Time) pcommo
 
 	// if the replica is different and the timestamp is newer than 10 seconds, we return the current replica
 	return current.replica
-
 }
