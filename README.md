@@ -13,7 +13,7 @@
 
 ## Description
 
-This processor deduplicates metrics by ensuring that only metrics from the in-use replica are retained.
+This processor deduplicates metrics by ensuring that only metrics from the in-use replica are retained, check the [Defining in use replica](#defining-in-use-replica) section for more details.
 
 ```yaml
 processors:
@@ -24,7 +24,9 @@ processors:
 
 ## Defining in use replica
 
-Below you can find the logic used to determine the in-use replica:
+The logic used to determine the in-use replica is inspired by [Cortex’s Distributor](https://github.com/cortexproject/cortex/blob/master/docs/architecture.md#distributor) component but adopts a simpler approach to avoid the need for distributed consensus on day zero.
+
+Below is the sequence diagram that describes the logic used to determine the in-use replica:
 
 ```mermaid
 sequenceDiagram
@@ -49,3 +51,5 @@ sequenceDiagram
     end
     Processor->>Receiver: Return in-use replica
 ```
+
+This approach ensures that only metrics from the in-use replica are processed, reducing the number of metrics processed and stored.
