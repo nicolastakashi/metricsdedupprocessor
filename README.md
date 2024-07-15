@@ -31,7 +31,7 @@ processors:
 
 ## Defining in use replica
 
-The logic used to determine the in-use replica is inspired by [Cortex’s Distributor](https://github.com/cortexproject/cortex/blob/master/docs/architecture.md#distributor) component but adopts a simpler approach to avoid the need for distributed consensus on day zero.
+The logic used to determine the in-use replica is inspired by [Cortex](https://grafana.com/blog/2019/10/03/deduping-ha-prometheus-samples-in-cortex) component but adopts a simpler approach to avoid the need for distributed consensus on day zero.
 
 Below is the sequence diagram that describes the logic used to determine the in-use replica:
 
