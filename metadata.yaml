@@ -1,0 +1,13 @@
+type: metricsdedup
+scope_name: otelcol/metricsdedup
+
+status:
+  class: processor
+  stability:
+    development: [metrics]
+  distributions: []
+  warnings: []
+  codeowners:
+    active: [nicolastakashi]
+tests:
+  config:

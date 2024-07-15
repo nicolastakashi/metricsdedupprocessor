@@ -1,4 +1,4 @@
-package otelmetricsdedup
+package metricsdedupprocessor
 
 import (
 	"context"

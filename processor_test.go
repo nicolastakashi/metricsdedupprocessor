@@ -1,4 +1,4 @@
-package otelmetricsdedup
+package metricsdedupprocessor
 
 import (
 	"context"
@@ -13,7 +13,7 @@ import (
 	"go.opentelemetry.io/collector/processor/processortest"
 )
 
-func TestDedupNoDelay(t *testing.T) {
+func TestDedupNoDelayedReplica(t *testing.T) {
 	t.Parallel()
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -69,7 +69,7 @@ func TestDedupNoDelay(t *testing.T) {
 	}
 }
 
-func TestDedupInactiveReplicas(t *testing.T) {
+func TestDedupDelayedReplica(t *testing.T) {
 	t.Parallel()
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
