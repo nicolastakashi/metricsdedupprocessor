@@ -54,19 +54,64 @@ func (p *Processor) ConsumeMetrics(ctx context.Context, md pmetric.Metrics) erro
 	now := time.Now()
 	var replica pcommon.Value
 	var ok bool
-	md.ResourceMetrics().RemoveIf(func(rm pmetric.ResourceMetrics) bool {
-		if replica, ok = rm.Resource().Attributes().Get(p.replicaLabel); !ok {
-			// if we don't have the replica label, we keep the ResourceMetrics
+
+	shouldRemove := func(attributes pcommon.Map) bool {
+		if replica, ok = attributes.Get(p.replicaLabel); !ok {
+			// if the replica is not set, we keep the Metric
 			return false
 		}
 
 		if replicaInUse := p.getInUseReplica(replica, now); replicaInUse == replica {
-			// if the replica is in use, we keep the ResourceMetrics
+			// if the replica is in use, we keep the Metric
 			return false
 		}
 
 		return true
+	}
+
+	md.ResourceMetrics().RemoveIf(func(rm pmetric.ResourceMetrics) bool {
+		rm.ScopeMetrics().RemoveIf(func(sm pmetric.ScopeMetrics) bool {
+			sm.Metrics().RemoveIf(func(m pmetric.Metric) bool {
+				switch m.Type() {
+				case pmetric.MetricTypeGauge:
+					m.Gauge().DataPoints().
+						RemoveIf(func(ndp pmetric.NumberDataPoint) bool {
+							return shouldRemove(ndp.Attributes())
+						})
+					return m.Gauge().DataPoints().Len() == 0
+				case pmetric.MetricTypeSum:
+					m.Sum().DataPoints().
+						RemoveIf(func(ndp pmetric.NumberDataPoint) bool {
+							return shouldRemove(ndp.Attributes())
+						})
+					return m.Sum().DataPoints().Len() == 0
+				case pmetric.MetricTypeHistogram:
+					m.Histogram().DataPoints().
+						RemoveIf(func(hdp pmetric.HistogramDataPoint) bool {
+							return shouldRemove(hdp.Attributes())
+						})
+					return m.Histogram().DataPoints().Len() == 0
+				case pmetric.MetricTypeSummary:
+					m.Summary().DataPoints().
+						RemoveIf(func(sdp pmetric.SummaryDataPoint) bool {
+							return shouldRemove(sdp.Attributes())
+						})
+					return m.Summary().DataPoints().Len() == 0
+				case pmetric.MetricTypeExponentialHistogram:
+					m.ExponentialHistogram().DataPoints().
+						RemoveIf(func(ehdp pmetric.ExponentialHistogramDataPoint) bool {
+							return shouldRemove(ehdp.Attributes())
+						})
+					return m.ExponentialHistogram().DataPoints().Len() == 0
+				}
+				return false
+			})
+			return sm.Metrics().Len() == 0
+		})
+
+		return rm.ScopeMetrics().Len() == 0
 	})
+
 	if err := p.nextConsumer.ConsumeMetrics(ctx, md); err != nil {
 		// we fail fast: if we get an error from the next, we break the processing for this batch
 		return err

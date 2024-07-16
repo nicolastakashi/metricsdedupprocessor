@@ -13,7 +13,7 @@
 
 ## Description
 
-This processor deduplicates metrics by ensuring that only metrics from the in-use replica are retained. It identifies the in-use replica by examining the resource attributes of incoming metrics to find the replica label. For more details, check the [Defining in use replica](#defining-in-use-replica) section.
+This processor deduplicates metrics by ensuring that only metrics from the in-use replica are retained. It identifies the in-use replica by examining the data points attributes of incoming metrics to find the replica label. For more details, check the [Defining in use replica](#defining-in-use-replica) section.
 
 This explanation highlights that the processor inspects the metric resource attributes to determine the replica label.
 
